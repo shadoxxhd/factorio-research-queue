@@ -24,7 +24,8 @@ data:extend{
       'wait',-- vanilla first
       'freeze',-- mod queue first, vanilla queue frozen
       'move-head',-- move vanilla queue to mod queue on UI close
-      'move-tail'-- move vanilla queue to mod queue on UI close
+      'move-tail',-- move vanilla queue to mod queue on UI close
+      'hybrid' -- first 1+3 queue slots are synced to queue[:4], last are used for queue_head
     }
   }
 }

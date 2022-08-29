@@ -113,7 +113,9 @@ local function enqueue(force, queue, tech)
     end
 
     table.insert(queue, tech)
+    return true
   end
+  return false
 end
 
 -- dequeue tech and all dependents
@@ -228,8 +230,9 @@ end
 
 -- enqueue and move to the left
 local function enqueue_head(force, queue, tech)
-  enqueue(force, queue, tech)
+  local ret = enqueue(force, queue, tech)
   shift_earliest(force, queue, tech)
+  return ret
 end
 
 -- enqueue and move to the left, ignoring current research
@@ -375,33 +378,12 @@ local function update(force, queue, paused, mode)
           -- compare rq with queue[1:7] - only removal: remove from queue; replacement/addition and #queue >=7: add to queue
           if queues_identical(force, queue) then return end -- identical queues
           -- check for new techs
-          local new = {} -- doesn't work if 2 techs switched places! TODO!
-          for i=1,7 do
-            local tech = rq[i]
-            if tech == nil then break end
-            local present = false
-            for j=1,7 do
-              if queue[j] == nil then break end
-              if tech.name == queue[j].tech.name then -- TODO: replace with .id check between rqtechs (incl. count_prev offset)
-                present=true
-                break
-              end
-            end
-            if not present then
-              table.insert(new, i)
-              break
-            end
+          local new = false -- currently doesn't detect pure reorders - feature or bug?
+          for i=#rq, 1, -1 do -- already existing techs are simply moved to the appropriate position
+            new = new or enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
           end
-          if #new > 0 then
-            -- new technology was added to rq
-            --for i=1,#new do
-            --  enqueue_head(force, queue, rqtech.new(force.research_queue[new[i]], 'current', count_prev(rq,#new+1-i)))
-            --end
-            for i=#rq, 1, -1 do -- already existing techs are simply moved to the appropriate position
-              enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
-            end
-          elseif #force.research_queue < 7 and #force.research_queue < #queue then
-            -- only deletion
+          if not new then -- only deletion
+          --if #force.research_queue < 7 and #force.research_queue < #queue then -- only deletion
             local removed = {}
             for i=1,7 do
               if queue[i] == nil then break end
@@ -431,6 +413,58 @@ local function update(force, queue, paused, mode)
         else -- unfreeze
           local rq = {}
           for i=1,7 do
+            if queue[i] == nil then break end
+            table.insert(rq, queue[i].tech)
+          end
+          set_queue(force, rq)
+        end
+      end
+    elseif settings.global['rq-sync'].value == 'hybrid' then
+      if mode==0 or mode==1 or (mode==2 and paused) then -- TODO: mode1: validate [1:3]/back off [4:6] to [5:7]
+        -- overwrite rq[0:3]
+        local rq={}
+        for i=1,4 do
+          if queue[i] == nil then break end
+          table.insert(rq, queue[i].tech)
+        end
+        set_queue(force, rq)
+      elseif mode==3 then -- vanilla UI
+        local old4 = {}
+        for i=1,4 do
+          if queue[i] == nil then break end
+          table.insert(old4, queue[i])
+        end
+        -- rq -> queue
+        local rq = force.research_queue
+        for i=#rq,1,-1 do
+          enqueue_head(force, queue, rqtech.new(rq[i], "current", count_prev(rq, i)))
+        end
+        -- check for removed techs
+        local dq = {}
+        for i=1,#old4 do
+          local found = false
+          for j=1, #rq do
+            if old4[i].tech.name == rq[j].name then --TODO: change to rqtech id
+              found = true
+              break
+            end
+          end
+          if not found then table.insert(dq, old4[i]) end
+        end
+        for _, tech in ipairs(dq) do
+          dequeue(force, queue, tech)
+        end
+        -- wipe [5:7]
+        for i=#rq,5,-1 do
+          table.remove(rq)
+        end
+        set_queue(force, rq)
+      elseif mode==4 then
+        if paused then
+          set_queue(force, {})
+        else
+          local rq = {}
+          for i=1,4 do
             if queue[i] == nil then break end
             table.insert(rq, queue[i].tech)
           end
