@@ -334,13 +334,6 @@ local function update(force, queue, paused, mode)
   end
 
   if force.research_queue_enabled then
-    -- old incompatability code
-    --force.print{'',
-    --  '[[color=150,206,130]',
-    --  {'mod-name.sonaxaton-research-queue'},
-    --  '[/color]] ',
-    --  {'sonaxaton-research-queue.vanilla-queue-overwritten-warning'}}
-    --force.research_queue_enabled = false
     if settings.global['rq-sync'].value == 'sync' then
       -- sync with vanilla queue
       if mode == 0 then -- mod UI
