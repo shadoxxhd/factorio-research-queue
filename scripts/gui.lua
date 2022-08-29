@@ -863,12 +863,13 @@ local function on_technology_gui_opened(player)
 end
 
 local function on_technology_gui_closed(player)
+  player.print("TUI closed")
   local player_data = global.players[player.index]
   local gui_data = player_data.gui
   local force = player.force
 
   queue.set_paused(force, force.current_research == nil)
-  queue.update(force)
+  queue.update(force, 3) -- 3: vanilla UI
   for _, player in pairs(force.players) do
     update_queue(player)
     update_techs(player)
@@ -882,11 +883,10 @@ local function on_technology_gui_closed(player)
 end
 
 local function on_research_started(force, tech, last_tech)
+  force.print("on_research_started:"..tech.name)
   tech = rqtech.new(tech, 'current')
   if not queue.is_head(force, tech, true) then
-    queue.set_paused(force, false)
-    queue.enqueue_head(force, tech)
-    queue.update(force)
+    queue.update(force, 2) -- 2: research started ----keep seperate (in case game is not paused while making changes to queue in vanilla UI); sets "diverged" flag
     for _, player in pairs(force.players) do
       update_queue(player, tech)
     end
@@ -895,7 +895,7 @@ end
 
 local function on_research_finished(force, tech)
   tech = rqtech.new(tech, 'previous')
-  queue.update(force)
+  queue.update(force, 1) -- 1:research finished
   for _, player in pairs(force.players) do
     local player_data = global.players[player.index]
     local filter_data = player_data.filter
@@ -1326,7 +1326,7 @@ guilib.add_handlers{
         if not event.shift and not event.control and not event.alt then
           if not rqtech.is_researched(tech) then
             queue.enqueue_tail(force, tech)
-            queue.update(force)
+            queue.update(force) -- 0: force reapply, overwriting if necessary
             for _, player in pairs(force.players) do
               update_queue(player, tech)
               update_techs(player)
@@ -1445,7 +1445,7 @@ guilib.add_handlers{
       local player = game.players[event.player_index]
       local force = player.force
       queue.toggle_paused(force)
-      queue.update(force)
+      queue.update(force, 4)
       for _, player in pairs(force.players) do
         update_queue(player)
         update_techs(player)

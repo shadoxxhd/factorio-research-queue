@@ -13,4 +13,18 @@ data:extend{
     setting_type = 'runtime-per-user',
     default_value = false,
   },
+  {
+    type = 'string-setting',
+    name = 'rq-sync',
+    order = 'a',
+    setting_type = 'runtime-global',
+    default_value = 'wait',
+    allowed_values = {
+      'sync',-- keep in sync
+      'wait',-- vanilla first
+      'freeze',-- mod queue first, vanilla queue frozen
+      'move-head',-- move vanilla queue to mod queue on UI close
+      'move-tail'-- move vanilla queue to mod queue on UI close
+    }
+  }
 }

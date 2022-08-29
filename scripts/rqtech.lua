@@ -14,7 +14,10 @@ function rqtech.deinit_force(force)
   global.rqtechs[force.index] = nil
 end
 
-function rqtech.new(tech, level)
+
+-- create rqtech struct: id, tech, level, upgradegroup, infinite, unitcount, prerequisites
+function rqtech.new(tech, level, offset)
+  if offset == nil then offset = 0 end
   local infinite = tech.research_unit_count_formula ~= nil
 
   local level_from_name = string.match(tech.name, '-(%d+)$')
@@ -28,12 +31,12 @@ function rqtech.new(tech, level)
   elseif level == 'current' or level == 'previous' or level == 'max' then
     if infinite then
       if level == 'current' then
-        level = tech.level
+        level = tech.level + offset
       elseif level == 'previous' then
         if tech.researched then
-          level = tech.level
+          level = tech.level + offset
         else
-          level = tech.level - 1
+          level = tech.level - 1 + offset
         end
       else
         level = tech.prototype.max_level
@@ -106,6 +109,7 @@ function rqtech.new(tech, level)
   return t
 end
 
+-- rqtech struct from tech id
 function rqtech.from_id(force, id)
   local cached_rqtech = global.rqtechs[force.index][id]
   if cached_rqtech ~= nil then
@@ -123,12 +127,14 @@ function rqtech.from_id(force, id)
   return rqtech.new(tech, level)
 end
 
+-- iterate over all rqtechs
 function rqtech.iter(force)
   return util.iter_map(
     util.iter_values(force.technologies),
     rqtech.new)
 end
 
+-- progress from rqtech
 function rqtech.progress(tech)
   local force = tech.tech.force
   if
@@ -144,6 +150,7 @@ function rqtech.progress(tech)
   end
 end
 
+-- status from rqtech
 function rqtech.is_researched(tech)
   if tech.tech.researched then
     return true
