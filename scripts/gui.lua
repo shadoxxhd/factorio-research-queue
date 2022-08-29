@@ -172,15 +172,17 @@ local function get_localised_string_key(player, localised_string)
   return translationlib.serialise_localised_string(localised_string)
 end
 
-local function start_translations(player)
+local function on_tick_translation_handler(event)
   if translationlib.translating_players_count() > 0 then
-    eventlib.on_tick(function(event)
-      if translationlib.translating_players_count() > 0 then
-        translationlib.iterate_batch(event)
-      else
-        eventlib.on_tick(nil)
-      end
-    end)
+    translationlib.iterate_batch(event)
+  else
+    eventlib.on_tick(nil)
+  end
+end
+
+local function register_translation_handler()
+  if translationlib.translating_players_count() > 0 then
+    eventlib.on_tick(on_tick_translation_handler)
   end
 end
 
@@ -725,7 +727,7 @@ local function init(player)
     end
 
     translationlib.add_requests(player.index, requests)
-    start_translations(player)
+    register_translation_handler()
   end
 
   auto_select_tech_ingredients(player)
@@ -1478,4 +1480,5 @@ return {
   close = close,
   toggle = toggle,
   focus_search = focus_search,
+  register_translation_handler = register_translation_handler,
 }
