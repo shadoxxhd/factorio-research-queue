@@ -277,7 +277,7 @@ local function count_after(rq, id)
   local j = 0
   for k=#rq,id+1,-1 do
     if rq[id].name == rq[k].name then
-      j=j+1#
+      j=j+1
     end
   end
   return j
