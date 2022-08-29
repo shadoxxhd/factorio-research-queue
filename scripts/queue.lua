@@ -6,9 +6,6 @@ local function new(force, paused)
   local queue = {}
   global.forces[force.index].queue = queue
   global.forces[force.index].queue_paused = paused
-  local backup = {}
-  global.forces[force.index].frozen = nil -- indicates first research that was frozen due to pausing the queue
-  -- global.forces[force.index].last = nil
 end
 
 -- move q[i] to [j] and shift intervening items
