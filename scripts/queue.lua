@@ -259,6 +259,46 @@ local function set_queue(force, target)
   force.previous_research = last
 end
 
+local function count_prev(rq, id)
+  local j = 0
+  for k=1, id-1 do
+    if rq[id].name == rq[k].name then
+      j = j+1
+    end
+  end
+  return j
+end
+
+-- is this even necessary? level of tech depends on same instances to the left
+local function count_after(rq, id)
+  local j = 0
+  for k=#rq,id+1,-1 do
+    if rq[id].name == rq[k].name then
+      j=j+1#
+    end
+  end
+  return j
+end
+
+local function queues_identical(force, queue)
+  local rq = force.research_queue
+  local flag = true
+  for i=1, 7 do
+    if force.research_queue[i] ~= nil and queue[i] ~= nil then
+      if force.research_queue[i].name ~= queue[i].tech.name then
+        flag = false
+        break
+      end
+    elseif force.research_queue[i] ~= nil or queue[i] ~= nil then
+      flag = false
+      break
+    else
+      break
+    end
+  end
+  return flag
+end
+
 -- sync with vanilla queue
 -- modes:
 --  0   mod queue changed from mod UI || overwrite vanilla | wait for vanilla | freeze vanilla
@@ -266,6 +306,8 @@ end
 --  2   research started || check for divergence (started from vanilla UI?) | noop | noop
 --  3   changes were made from vanilla || merge changes into mod | noop (wait for empty queue) | noop
 --  4   pause toggle || pause: prevent [8:] from advancing ('frozen') | noop | let vanilla advance if paused (?push back current if paused?)
+-- TODO:
+--  - time estimation
 local function update(force, queue, paused, mode)
   if mode == nil then
     mode = 0
@@ -281,10 +323,10 @@ local function update(force, queue, paused, mode)
     dequeue(force, queue, tech)
   end
   -- process newly started tech
-  if mode==2 and settings.global['rq-sync'].value ~= 'freeze' then
-    set_paused(force, false)
+  if mode==2 then
+    global.forces[force.index].queue_paused = false
     local tech = rqtech.new(force.research_queue[1], "current")
-    enqueue_head(force, tech)
+    enqueue_head(force, queue, tech)
   end
 
   if force.research_queue_enabled then
@@ -300,7 +342,7 @@ local function update(force, queue, paused, mode)
       if mode == 0 then -- mod UI
         rq = {}
         for i=1,7 do
-          if queue[i]~= nil then break end
+          if queue[i] == nil then break end
           table.insert(rq, queue[i].tech)
         end
         set_queue(force, rq)
@@ -312,15 +354,6 @@ local function update(force, queue, paused, mode)
         end
       elseif mode == 2 then -- research started TODO
         if paused then -- was paused - restore queue
-          -- put current rq in front of queue - already done by general mode2 handling
-            --[[local rq = force.research_queue
-            for i=1, #rq do
-              local j = 0
-              for k=1, i-1 do
-                if rq[#rq+1-i].name == rq[#rq+1-k].name then j=j+1 end
-              end
-              enqueue_head(force, queue, rqtech.new(rq[#rq+1-i], 'current', j))
-            end--]]
           local rq = {}
           for i=1,7 do
             if queue[i] == nil then break end
@@ -336,65 +369,60 @@ local function update(force, queue, paused, mode)
         end
       elseif mode == 3 then -- vanilla UI closed TODO
         -- merge vanilla queue changes into mod UI (cancel, add(<7), reorder, replace as cancel or insert)
-        -- compare rq with queue[1:7] - only removal: remove from queue; replacement and #queue >=7: add to queue
-        -- check difference
-        local flag = false
-        for i=1, 7 do
-          if force.research_queue[i] ~= nil and queue[i] ~= nil then
-            if force.research_queue[i].name ~= queue[i].tech.name then
-              flag = true
-              break
-            end
-          elseif force.research_queue[i] ~= nil or queue[i] ~= nil then
-            flag = true
-            break
-          else
-            break
-          end
-        end
-        if not flag then return end
-        -- some change occured
-        --check for new techs
-        local new = {}
-        for i=1,7 do
-          local tech = force.research_queue[i]
-          if tech == nil then break end
-          local present = false
-          for j=1,7 do
-            if tech.name == queue[j].tech.name then
-              present=true
-              break
-            end
-          end
-          if not present then
-            table.insert(new, tech)
-          end
-        end
-        if #new > 0 then
-          -- new technology was added to rq
-          for i=1,#new do
-            local j = 0
-            for k=i+1, #new do
-              if new[#new+1-i].name == new[#new+1-k].name then j=j+1 end
-            end
-            enqueue_head(force, rqtech.new(new[#new+1-i], 'current', j))
-          end
-        elseif #force.research_queue < 7 and #force.research_queue < #queue then
-          -- only deletion
-          local removed = {}
+        -- replace as add --- replace as add & remove would need additional flag
+        if #queue > 7 then
+          local rq = force.research_queue
+          -- compare rq with queue[1:7] - only removal: remove from queue; replacement/addition and #queue >=7: add to queue
+          if queues_identical(force, queue) then return end -- identical queues
+          -- check for new techs
+          local new = {} -- doesn't work if 2 techs switched places! TODO!
           for i=1,7 do
-            if queue[i] == nil then break end
+            local tech = rq[i]
+            if tech == nil then break end
             local present = false
-            for j=1,#force.research_queue do
-              if queue[i].tech.name == force.research_queue[j].name then
-                present = true
+            for j=1,7 do
+              if queue[j] == nil then break end
+              if tech.name == queue[j].tech.name then -- TODO: replace with .id check between rqtechs (incl. count_prev offset)
+                present=true
                 break
               end
             end
-            if not present then table.insert(removed, queue[i]) end
+            if not present then
+              table.insert(new, i)
+              break
+            end
           end
-          for _,tech in ipairs(removed) do
-            dequeue(force, queue, tech)
+          if #new > 0 then
+            -- new technology was added to rq
+            --for i=1,#new do
+            --  enqueue_head(force, queue, rqtech.new(force.research_queue[new[i]], 'current', count_prev(rq,#new+1-i)))
+            --end
+            for i=#rq, 1, -1 do -- already existing techs are simply moved to the appropriate position
+              enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
+            end
+          elseif #force.research_queue < 7 and #force.research_queue < #queue then
+            -- only deletion
+            local removed = {}
+            for i=1,7 do
+              if queue[i] == nil then break end
+              local present = false
+              for j=1,#force.research_queue do
+                if queue[i].tech.name == force.research_queue[j].name then
+                  present = true
+                  break
+                end
+              end
+              if not present then table.insert(removed, queue[i]) end
+            end
+            for _,tech in ipairs(removed) do
+              dequeue(force, queue, tech)
+            end
+          end
+        else -- #queue <= 7 -> simply replace queue
+          clear(force, global.forces[force.index])
+          local rq = force.research_queue
+          for i=1, #rq do
+            enqueue_tail(force, queue, rqtech.new(rq[i], "current", count_prev(rq, i)))
           end
         end
       elseif mode == 4 then -- pause toggle
@@ -435,20 +463,12 @@ local function update(force, queue, paused, mode)
         force.print("sufficient items")
         -- move to mod queue
         if settings.global['rq-sync'].value == 'move-head' then
-          for i=1, #rq do
-            local j = 0
-            for k=1, i-1 do
-              if rq[#rq+1-i].name == rq[#rq+1-k].name then j=j+1 end
-            end
-            enqueue_head(force, queue, rqtech.new(rq[#rq+1-i], 'current', j))
+          for i=#rq,1,-1 do
+            enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
           end
         else
           for i=1, #rq do
-            local j = 0
-            for k=1, i-1 do
-              if rq[i].name == rq[k].name then j=j+1 end
-            end
-            enqueue_tail(force, queue, rqtech.new(rq[i], 'current', j))
+            enqueue_tail(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
           end
         end
       end
