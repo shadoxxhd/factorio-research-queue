@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2022-08-28
+  Changes:
+    - added queue.update mode parameter indicating the type of update
+    - added mode argument to export of queue.update
+    - moved enqueue from research_started to respective mode of queue.update
+    - added set_queue function that conserves force.previous_research
+    - implemented new behavior in queue.update function
+    - added optional offset parameter to rqtech.new 
+    - added rq-sync setting
+---------------------------------------------------------------------------------------------------
 Version: 0.4.18
 Date: 2021-01-15
   Bugfixes:
