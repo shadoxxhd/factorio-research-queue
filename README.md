@@ -1,3 +1,11 @@
+# Fork adding compatability with vanilla research queue
+
+- the vanilla research UI now remembers the last research completed
+- depending on the chosen sync mode, the two research queues (modded and vanilla) are either:
+  - always kept in __sync__
+  - completed one after the other (__wait__ for vanilla queue to be empty or __freeze__ vanilla while the mod queue has projects)
+  - __moved__ from vanilla queue to the __head__ or __tail__  of the modded queue
+
 # Improved Research Queue
 
 This is a mod for the game [Factorio](https://www.factorio.com/). It can be downloaded from the [Factorio Mod Portal](https://mods.factorio.com/mod/sonaxaton-research-queue).
