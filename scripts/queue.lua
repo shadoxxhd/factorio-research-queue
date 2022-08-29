@@ -283,10 +283,11 @@ local function count_after(rq, id)
   return j
 end
 
-local function queues_identical(force, queue)
+local function queues_identical(force, queue, n)
+  if n == nil then n = 7 end
   local rq = force.research_queue
   local flag = true
-  for i=1, 7 do
+  for i=1, n do
     if force.research_queue[i] ~= nil and queue[i] ~= nil then
       if force.research_queue[i].name ~= queue[i].tech.name then
         flag = false
@@ -340,7 +341,7 @@ local function update(force, queue, paused, mode)
     --  '[/color]] ',
     --  {'sonaxaton-research-queue.vanilla-queue-overwritten-warning'}}
     --force.research_queue_enabled = false
-    if settings.global['rq-sync'].value == 'sync' then -- TODO
+    if settings.global['rq-sync'].value == 'sync' then
       -- sync with vanilla queue
       if mode == 0 then -- mod UI
         rq = {}
@@ -350,41 +351,29 @@ local function update(force, queue, paused, mode)
         end
         set_queue(force, rq)
       elseif mode == 1 then -- research finished
-        if queue[7] ~= nil then
-          local rq = force.research_queue
+        local rq = force.research_queue
+        if queues_identical(force, queue, #rq) then -- check for divergence while UI is open
           table.insert(rq, queue[7].tech)
           set_queue(force, rq)
         end
-      elseif mode == 2 then -- research started TODO
-        if paused then -- was paused - restore queue
-          local rq = {}
-          for i=1,7 do
-            if queue[i] == nil then break end
-            table.insert(rq, queue[i].tech)
-          end
-          set_queue(force, rq)
-        else -- was not paused TODO
-          -- if normal "next in line": noop
-          -- if diverged: vanilla UI input; compare queues. final merge waits until UI closed.
-          --  should probably be effectively noop???
-          if force.research_queue[1].name == queue[1].tech.name then return end
-          -- do anything?
+      elseif mode == 2 and paused then -- research started
+        -- was paused - restore queue
+        local rq = {}
+        for i=1,7 do
+          if queue[i] == nil then break end
+          table.insert(rq, queue[i].tech)
         end
-      elseif mode == 3 then -- vanilla UI closed TODO
+        set_queue(force, rq)
+      elseif mode == 3 then -- vanilla UI closed
         -- merge vanilla queue changes into mod UI (cancel, add(<7), reorder, replace as cancel or insert)
-        -- replace as add --- replace as add & remove would need additional flag
+        -- replace as add while #queue>7; removal and no new techs -> purge all removed
+        -- remove 2 and add tech already further in queue: interpreted as deletion! (TODO: add disclaimer)
         if #queue > 7 then
           local rq = force.research_queue
-          -- compare rq with queue[1:7] - only removal: remove from queue; replacement/addition and #queue >=7: add to queue
+          -- compare rq with queue[1:7] - only removal: remove from queue; replacement and #queue >=7: add to queue
           if queues_identical(force, queue) then return end -- identical queues
-          -- check for new techs
-          local new = false -- currently doesn't detect pure reorders - feature or bug?
-          for i=#rq, 1, -1 do -- already existing techs are simply moved to the appropriate position
-            new = new or enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
-          end
-          if not new then -- only deletion
-          --if #force.research_queue < 7 and #force.research_queue < #queue then -- only deletion
-            local removed = {}
+          local removed = {} -- collect removed techs
+          if #force.research_queue < 7 and #force.research_queue < #queue then -- deletion, not just replacement - collect removed techs
             for i=1,7 do
               if queue[i] == nil then break end
               local present = false
@@ -396,10 +385,23 @@ local function update(force, queue, paused, mode)
               end
               if not present then table.insert(removed, queue[i]) end
             end
+          end
+          -- check for new techs
+          local new = false -- currently doesn't detect pure reorders - feature or bug?
+          for i=#rq, 1, -1 do -- already existing techs are simply moved to the appropriate position
+            new = new or enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
+          end
+          if not new then -- no new techs queued -> delete those no longer present in rq
             for _,tech in ipairs(removed) do
               dequeue(force, queue, tech)
             end
           end
+          rq = {}
+          for i=1,7 do
+            if queue[i] == nil then break end
+            table.insert(rq, queue[i].tech)
+          end
+          set_queue(force, rq) -- should not be necessary, but makes sure no divergence occurs
         else -- #queue <= 7 -> simply replace queue
           clear(force, global.forces[force.index])
           local rq = force.research_queue
@@ -420,7 +422,7 @@ local function update(force, queue, paused, mode)
         end
       end
     elseif settings.global['rq-sync'].value == 'hybrid' then
-      if mode==0 or mode==1 or (mode==2 and paused) then -- TODO: mode1: validate [1:3]/back off [4:6] to [5:7]
+      if mode==0 or mode==1 or (mode==2 and paused) then -- TODO: mode1: validate [1:3]/back off [4:6] to [5:7] (prevent UI interference)
         -- overwrite rq[0:3]
         local rq={}
         for i=1,4 do
