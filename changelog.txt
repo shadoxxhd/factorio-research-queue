@@ -10,7 +10,7 @@ Date: 2022-08-28
     - 'freeze' mode: the vanilla queue is frozen until the extended queue is empty
     - 'move-head' mode: technologies queued in the vanilla UI are moved to the head of the extended queue
     - 'move-tail' mode: same as above, except that newly queued techs are appended to the extended queue at the bottom
-    - To enable the vanilla queue after using 'Improved Research Queue', you can use the mod EnableResearchQueue by s2upidperson.
+    - 'disabled' mode: locks the vanilla queue
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.18
 Date: 2021-01-15

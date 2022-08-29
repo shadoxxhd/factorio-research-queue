@@ -334,6 +334,11 @@ local function update(force, queue, paused, mode)
   end
 
   if force.research_queue_enabled then
+    if settings.global['rq-sync'].value == 'disabled' then
+      force.research_queue_enabled = false
+      force.print{'','[[color=150,206,130]',{'mod-name.factorio-research-queue'},'[/color]] ',{'factorio-research-queue.vanilla-queue-disabled'}}
+      return
+    end
     if settings.global['rq-sync'].value == 'sync' then
       -- sync with vanilla queue
       if mode == 0 then -- mod UI
@@ -508,6 +513,11 @@ local function update(force, queue, paused, mode)
       end
     end
   else
+    if not settings.global['rq-sync'].value == 'disabled' then
+      force.research_queue_enabled = true
+      force.print{'','[[color=150,206,130]',{'mod-name.factorio-research-queue'},'[/color]] ',{'factorio-research-queue.vanilla-queue-enabled'}}
+      return
+    end
     -- "classic" queue replacement
     if not paused and next(queue) ~= nil then
       set_queue(force, {queue[1].tech})

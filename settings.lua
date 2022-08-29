@@ -18,8 +18,9 @@ data:extend{
     name = 'rq-sync',
     order = 'a',
     setting_type = 'runtime-global',
-    default_value = 'wait',
+    default_value = 'hybrid',
     allowed_values = {
+      'disabled',
       'sync',-- keep in sync
       'wait',-- vanilla first
       'freeze',-- mod queue first, vanilla queue frozen
