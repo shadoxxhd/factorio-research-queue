@@ -242,10 +242,10 @@ eventlib.on_player_changed_force(function(event)
 end)
 
 eventlib.on_lua_shortcut(function(event)
-  if event.prototype_name == 'sonaxaton-research-queue' then
+  if event.prototype_name == 'factorio-research-queue' then
     local player = game.players[event.player_index]
     if player ~= nil then
-      if player.is_shortcut_toggled('sonaxaton-research-queue') then
+      if player.is_shortcut_toggled('factorio-research-queue') then
         gui.close(player)
       else
         gui.open(player)

@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2022-08-28
+  Features:
+    - The vanilla UI now remembers the most recently researched technology, instead of always showing the first one in the list on opening
+    - Compatability with vanilla research queue!
+    - 'sync' mode: first 7 items in mod queue are kept synchronized with vanilla queue. Modifications to the vanilla queue carry over to the extended queue, except when the extended queue has more than 7 items - in that case, *replacing* a tech with another in the vanilla UI only *adds* the new one, bumping the replaced one further down the queue
+    - 'hybrid' mode: first 4 items are kept synced between queues, and the last 3 slots of the vanilla queue can be used to add new techs into the extended queue no matter how many techs are queued in total
+    - 'wait' mode: the extended queue waits for the vanilla queue to be empty before becoming active
+    - 'freeze' mode: the vanilla queue is frozen until the extended queue is empty
+    - 'move-head' mode: technologies queued in the vanilla UI are moved to the head of the extended queue
+    - 'move-tail' mode: same as above, except that newly queued techs are appended to the extended queue at the bottom
+    - 'disabled' mode: locks the vanilla queue
+---------------------------------------------------------------------------------------------------
 Version: 0.4.18
 Date: 2021-01-15
   Bugfixes:

@@ -1,6 +1,6 @@
 local data_util = require('__flib__.data-util')
 
-local path = '__sonaxaton-research-queue__/graphics/icons.png'
+local path = '__factorio-research-queue__/graphics/icons.png'
 
 data:extend{
   data_util.build_sprite('rq-enqueue-last-black', {0, 0}, path, 32),

@@ -69,9 +69,9 @@ local function update_etcs(player)
     end
     tech_ingredient_totals_text = tech_ingredient_totals_text..'[/font]'
     gui_data.etc_labels[tech.id].tooltip = {'',
-      {'sonaxaton-research-queue.etc-label-tooltip', etc_text},
+      {'factorio-research-queue.etc-label-tooltip', etc_text},
       '\n',
-      {'sonaxaton-research-queue.tech-ingredient-totals-tooltip',
+      {'factorio-research-queue.tech-ingredient-totals-tooltip',
         tech_ingredient_totals_text}}
   end
 end
@@ -113,7 +113,7 @@ local function update_queue(player, new_tech)
     gui_data.queue_pause_toggle_button.sprite = 'rq-play-white'
     gui_data.queue_pause_toggle_button.hovered_sprite = 'rq-play-black'
     gui_data.queue_pause_toggle_button.clicked_sprite = 'rq-play-black'
-    gui_data.queue_pause_toggle_button.tooltip = {'sonaxaton-research-queue.queue-play-button-tooltip'}
+    gui_data.queue_pause_toggle_button.tooltip = {'factorio-research-queue.queue-play-button-tooltip'}
     guilib.build(gui_data.queue_head, {
       {
         type = 'flow',
@@ -124,7 +124,7 @@ local function update_queue(player, new_tech)
             style = 'rq_tech_queue_item_paused_unpause_button',
             handlers = 'queue_pause_toggle_button',
             sprite = 'rq-play-black',
-            tooltip = {'sonaxaton-research-queue.queue-play-button-tooltip'},
+            tooltip = {'factorio-research-queue.queue-play-button-tooltip'},
             mouse_button_filter = {'left'},
           },
         },
@@ -136,7 +136,7 @@ local function update_queue(player, new_tech)
     gui_data.queue_pause_toggle_button.sprite = 'rq-pause-white'
     gui_data.queue_pause_toggle_button.hovered_sprite = 'rq-pause-black'
     gui_data.queue_pause_toggle_button.clicked_sprite = 'rq-pause-black'
-    gui_data.queue_pause_toggle_button.tooltip = {'sonaxaton-research-queue.queue-pause-button-tooltip'}
+    gui_data.queue_pause_toggle_button.tooltip = {'factorio-research-queue.queue-pause-button-tooltip'}
   end
   local new_tech_element = nil
   local items_gui_data = {}
@@ -213,7 +213,7 @@ local function update_techs(player)
         handlers = 'tech_ingredient_filter_button',
         sprite = string.format('%s/%s', 'item', tech_ingredient.name),
         tooltip = {
-          'sonaxaton-research-queue.tech-ingredient-filter-button-' ..
+          'factorio-research-queue.tech-ingredient-filter-button-' ..
             (enabled and 'enabled' or 'disabled'),
           tech_ingredient.localised_name,
         },
@@ -456,7 +456,7 @@ local function create_guis(player)
               children = {
                 {
                   template = 'frame_title',
-                  caption = {'sonaxaton-research-queue.window-title'},
+                  caption = {'factorio-research-queue.window-title'},
                 },
                 {
                   template = 'titlebar_drag_handle',
@@ -469,7 +469,7 @@ local function create_guis(player)
                   elem_mods = {
                     visible = false,
                   },
-                  tooltip = {'sonaxaton-research-queue.search-tooltip'},
+                  tooltip = {'factorio-research-queue.search-tooltip'},
                 },
                 {
                   save_as = 'search_toggle_button',
@@ -478,7 +478,7 @@ local function create_guis(player)
                   sprite = 'utility/search_white',
                   hovered_sprite = 'utility/search_black',
                   clicked_sprite = 'utility/search_black',
-                  tooltip = {'sonaxaton-research-queue.search-tooltip'},
+                  tooltip = {'factorio-research-queue.search-tooltip'},
                 },
                 {
                   save_as = 'queue_pause_toggle_button',
@@ -493,7 +493,7 @@ local function create_guis(player)
                   sprite = 'utility/trash_white',
                   hovered_sprite = 'utility/trash',
                   clicked_sprite = 'utility/trash',
-                  tooltip = {'sonaxaton-research-queue.clear-tooltip'},
+                  tooltip = {'factorio-research-queue.clear-tooltip'},
                 },
                 {
                   template = 'frame_action_button',
@@ -519,7 +519,7 @@ local function create_guis(player)
                   sprite = 'utility/close_white',
                   hovered_sprite = 'utility/close_black',
                   clicked_sprite = 'utility/close_black',
-                  tooltip = {'sonaxaton-research-queue.close-tooltip'},
+                  tooltip = {'factorio-research-queue.close-tooltip'},
                 },
               },
             },
@@ -580,7 +580,7 @@ local function create_guis(player)
               children = {
                 {
                   template = 'frame_title',
-                  caption = {'sonaxaton-research-queue.settings-title'},
+                  caption = {'factorio-research-queue.settings-title'},
                 },
                 {
                   template = 'titlebar_drag_handle',
@@ -599,14 +599,14 @@ local function create_guis(player)
                   save_as = 'researched_techs_checkbox',
                   type = 'checkbox',
                   handlers = 'researched_techs_checkbox',
-                  caption = {'sonaxaton-research-queue.researched-techs-checkbox'},
+                  caption = {'factorio-research-queue.researched-techs-checkbox'},
                   state = false,
                 },
                 {
                   save_as = 'upgrade_techs_checkbox',
                   type = 'checkbox',
                   handlers = 'upgrade_techs_checkbox',
-                  caption = {'sonaxaton-research-queue.upgrade-techs-checkbox'},
+                  caption = {'factorio-research-queue.upgrade-techs-checkbox'},
                   state = false,
                 },
                 {
@@ -617,7 +617,7 @@ local function create_guis(player)
                     {
                       type = 'label',
                       style = 'caption_label',
-                      caption = {'sonaxaton-research-queue.tech-ingredient-filter-table'},
+                      caption = {'factorio-research-queue.tech-ingredient-filter-table'},
                     },
                     {
                       type = 'scroll-pane',
@@ -807,7 +807,7 @@ local function open(player)
 
   gui_data.window.visible = true
   player.opened = gui_data.window
-  player.set_shortcut_toggled('sonaxaton-research-queue', true)
+  player.set_shortcut_toggled('factorio-research-queue', true)
   if gui_data.search.visible then
     gui_data.search.focus()
     gui_data.search.select_all()
@@ -835,7 +835,7 @@ local function close(player)
       game.tick_paused = false
     end
   end
-  player.set_shortcut_toggled('sonaxaton-research-queue', false)
+  player.set_shortcut_toggled('factorio-research-queue', false)
 end
 
 local function toggle(player)
@@ -868,7 +868,7 @@ local function on_technology_gui_closed(player)
   local force = player.force
 
   queue.set_paused(force, force.current_research == nil)
-  queue.update(force)
+  queue.update(force, 3) -- 3: vanilla UI
   for _, player in pairs(force.players) do
     update_queue(player)
     update_techs(player)
@@ -884,9 +884,7 @@ end
 local function on_research_started(force, tech, last_tech)
   tech = rqtech.new(tech, 'current')
   if not queue.is_head(force, tech, true) then
-    queue.set_paused(force, false)
-    queue.enqueue_head(force, tech)
-    queue.update(force)
+    queue.update(force, 2) -- 2: research started ----keep seperate (in case game is not paused while making changes to queue in vanilla UI); sets "diverged" flag
     for _, player in pairs(force.players) do
       update_queue(player, tech)
     end
@@ -895,14 +893,14 @@ end
 
 local function on_research_finished(force, tech)
   tech = rqtech.new(tech, 'previous')
-  queue.update(force)
+  queue.update(force, 1) -- 1:research finished
   for _, player in pairs(force.players) do
     local player_data = global.players[player.index]
     local filter_data = player_data.filter
     local tech_ingredients = player_data.tech_ingredients
 
     if settings.get_player_settings(player)['rq-notifications'].value then
-      player.print{'sonaxaton-research-queue.notification', tech.tech.name}
+      player.print{'factorio-research-queue.notification', tech.tech.name}
     end
 
     for _, tech_ingredient in ipairs(tech_ingredients) do
@@ -1027,11 +1025,11 @@ guilib.add_templates{
       tech.tech.localised_description,
       cost}
     if not researched then
-      table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-enqueue-last'})
-      table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-enqueue-second'})
-      table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-dequeue'})
+      table.insert(tooltip_lines, {'factorio-research-queue.tech-button-enqueue-last'})
+      table.insert(tooltip_lines, {'factorio-research-queue.tech-button-enqueue-second'})
+      table.insert(tooltip_lines, {'factorio-research-queue.tech-button-dequeue'})
     end
-    table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-open'})
+    table.insert(tooltip_lines, {'factorio-research-queue.tech-button-open'})
     local tooltip = {}
     local first = true
     for _, line in ipairs(tooltip_lines) do
@@ -1094,7 +1092,7 @@ guilib.add_templates{
                 type = 'label',
                 style = 'rq_etc_label',
                 caption = '[img=quantity-time][img=infinity]',
-                tooltip = {'sonaxaton-research-queue.etc-label-tooltip'},
+                tooltip = {'factorio-research-queue.etc-label-tooltip'},
               },
             },
           },
@@ -1110,7 +1108,7 @@ guilib.add_templates{
                 handlers = 'shift_up_button',
                 tooltip =
                   shift_up_enabled and
-                    {'sonaxaton-research-queue.shift-up-button-tooltip', tech.tech.localised_name} or
+                    {'factorio-research-queue.shift-up-button-tooltip', tech.tech.localised_name} or
                     nil,
                 enabled = shift_up_enabled,
                 mouse_button_filter = {'left'},
@@ -1125,7 +1123,7 @@ guilib.add_templates{
                 style = 'rq_tech_queue_item_close_button',
                 handlers = 'dequeue_button',
                 sprite = 'utility/close_black',
-                tooltip = {'sonaxaton-research-queue.dequeue-button-tooltip', tech.tech.localised_name},
+                tooltip = {'factorio-research-queue.dequeue-button-tooltip', tech.tech.localised_name},
               },
               {
                 type = 'empty-widget',
@@ -1138,7 +1136,7 @@ guilib.add_templates{
                 handlers = 'shift_down_button',
                 tooltip =
                   shift_down_enabled and
-                    {'sonaxaton-research-queue.shift-down-button-tooltip', tech.tech.localised_name} or
+                    {'factorio-research-queue.shift-down-button-tooltip', tech.tech.localised_name} or
                     nil,
                 enabled = shift_down_enabled,
                 mouse_button_filter = {'left'},
@@ -1222,7 +1220,7 @@ guilib.add_templates{
                 style = 'rq_tech_list_item_tool_button',
                 handlers = 'enqueue_last_button',
                 sprite = 'rq-enqueue-last-black',
-                tooltip = {'sonaxaton-research-queue.enqueue-last-button-tooltip', tech.tech.localised_name},
+                tooltip = {'factorio-research-queue.enqueue-last-button-tooltip', tech.tech.localised_name},
                 enabled = researchable,
               },
               {
@@ -1231,7 +1229,7 @@ guilib.add_templates{
                 style = 'rq_tech_list_item_tool_button',
                 handlers = 'enqueue_second_button',
                 sprite = 'rq-enqueue-second-black',
-                tooltip = {'sonaxaton-research-queue.enqueue-second-button-tooltip', tech.tech.localised_name},
+                tooltip = {'factorio-research-queue.enqueue-second-button-tooltip', tech.tech.localised_name},
                 enabled = researchable,
               },
               {
@@ -1240,7 +1238,7 @@ guilib.add_templates{
                 style = 'rq_tech_list_item_tool_button',
                 handlers = 'enqueue_first_button',
                 sprite = 'rq-enqueue-first-black',
-                tooltip = {'sonaxaton-research-queue.enqueue-first-button-tooltip', tech.tech.localised_name},
+                tooltip = {'factorio-research-queue.enqueue-first-button-tooltip', tech.tech.localised_name},
                 enabled = researchable,
               },
             },
@@ -1326,7 +1324,7 @@ guilib.add_handlers{
         if not event.shift and not event.control and not event.alt then
           if not rqtech.is_researched(tech) then
             queue.enqueue_tail(force, tech)
-            queue.update(force)
+            queue.update(force) -- 0: force reapply, overwriting if necessary
             for _, player in pairs(force.players) do
               update_queue(player, tech)
               update_techs(player)
@@ -1445,7 +1443,7 @@ guilib.add_handlers{
       local player = game.players[event.player_index]
       local force = player.force
       queue.toggle_paused(force)
-      queue.update(force)
+      queue.update(force, 4)
       for _, player in pairs(force.players) do
         update_queue(player)
         update_techs(player)
