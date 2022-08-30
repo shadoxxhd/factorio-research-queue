@@ -21,7 +21,7 @@ local function build(player, window)
           ref = {'titlebar'},
           type = 'flow',
           children = {
-            templates.frame_title{'sonaxaton-research-queue.settings-title'},
+            templates.frame_title{'factorio-research-queue.settings-title'},
             templates.titlebar_drag_handle(),
           },
         },
@@ -39,7 +39,7 @@ local function build(player, window)
               actions = {
                 on_click = 'toggle_researched_filter',
               },
-              caption = {'sonaxaton-research-queue.researched-techs-checkbox'},
+              caption = {'factorio-research-queue.researched-techs-checkbox'},
               state = false,
             },
             {
@@ -48,7 +48,7 @@ local function build(player, window)
               actions = {
                 on_click = 'toggle_upgrades_filter',
               },
-              caption = {'sonaxaton-research-queue.upgrade-techs-checkbox'},
+              caption = {'factorio-research-queue.upgrade-techs-checkbox'},
               state = false,
             },
             {
@@ -59,7 +59,7 @@ local function build(player, window)
                 {
                   type = 'label',
                   style = 'caption_label',
-                  caption = {'sonaxaton-research-queue.tech-ingredient-filter-table'},
+                  caption = {'factorio-research-queue.tech-ingredient-filter-table'},
                 },
                 {
                   type = 'scroll-pane',

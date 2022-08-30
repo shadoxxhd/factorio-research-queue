@@ -39,10 +39,10 @@ local function update_tech_button_tooltip(player, gui_data, tech)
     table.insert(tooltip_lines, tech.tech.localised_description)
   end
   table.insert(tooltip_lines, cost)
-  table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-enqueue-last'})
-  table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-enqueue-second'})
-  table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-dequeue'})
-  table.insert(tooltip_lines, {'sonaxaton-research-queue.tech-button-open'})
+  table.insert(tooltip_lines, {'factorio-research-queue.tech-button-enqueue-last'})
+  table.insert(tooltip_lines, {'factorio-research-queue.tech-button-enqueue-second'})
+  table.insert(tooltip_lines, {'factorio-research-queue.tech-button-dequeue'})
+  table.insert(tooltip_lines, {'factorio-research-queue.tech-button-open'})
 
   local tooltip = {''}
   do

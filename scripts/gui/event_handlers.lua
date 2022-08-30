@@ -80,7 +80,7 @@ end
 function event_handlers.toggle_queue_pause(player, event)
   local force = player.force
   queue.toggle_paused(force)
-  queue.update(force)
+  queue.update(force, 4) -- pause toggle
   for _, player in pairs(force.players) do
     if global.players[player.index] ~= nil then
       actions.update_queue(player)

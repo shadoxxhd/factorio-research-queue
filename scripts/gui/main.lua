@@ -70,7 +70,7 @@ local function build_tech_item(player, container, tech, index)
                 on_click = { type = 'enqueue', pos = 'last', tech = tech.id },
               },
               sprite = 'rq-enqueue-last-black',
-              tooltip = {'sonaxaton-research-queue.enqueue-last-button-tooltip', tech.tech.localised_name},
+              tooltip = {'factorio-research-queue.enqueue-last-button-tooltip', tech.tech.localised_name},
             },
             templates.tool_button{
               style = 'rq_tech_list_item_tool_button',
@@ -78,7 +78,7 @@ local function build_tech_item(player, container, tech, index)
                 on_click = { type = 'enqueue', pos = 'second', tech = tech.id },
               },
               sprite = 'rq-enqueue-second-black',
-              tooltip = {'sonaxaton-research-queue.enqueue-second-button-tooltip', tech.tech.localised_name},
+              tooltip = {'factorio-research-queue.enqueue-second-button-tooltip', tech.tech.localised_name},
             },
             templates.tool_button{
               style = 'rq_tech_list_item_tool_button',
@@ -86,7 +86,7 @@ local function build_tech_item(player, container, tech, index)
                 on_click = { type = 'enqueue', pos = 'first', tech = tech.id },
               },
               sprite = 'rq-enqueue-first-black',
-              tooltip = {'sonaxaton-research-queue.enqueue-first-button-tooltip', tech.tech.localised_name},
+              tooltip = {'factorio-research-queue.enqueue-first-button-tooltip', tech.tech.localised_name},
             },
           },
         },
@@ -120,7 +120,7 @@ local function build(player, window)
           ref = {'titlebar'},
           type = 'flow',
           children = {
-            templates.frame_title{'sonaxaton-research-queue.window-title'},
+            templates.frame_title{'factorio-research-queue.window-title'},
             templates.titlebar_drag_handle(),
             {
               ref = {'search'},
@@ -129,7 +129,7 @@ local function build(player, window)
                 on_text_changed = 'update_search',
               },
               clear_and_focus_on_right_click = true,
-              tooltip = {'sonaxaton-research-queue.search-tooltip'},
+              tooltip = {'factorio-research-queue.search-tooltip'},
               elem_mods = {
                 visible = false,
               },
@@ -142,7 +142,7 @@ local function build(player, window)
               sprite = 'utility/search_white',
               hovered_sprite = 'utility/search_black',
               clicked_sprite = 'utility/search_black',
-              tooltip = {'sonaxaton-research-queue.search-tooltip'},
+              tooltip = {'factorio-research-queue.search-tooltip'},
             },
             templates.frame_action_button{
               ref = {'queue_pause_toggle_button'},
@@ -159,7 +159,7 @@ local function build(player, window)
               sprite = 'utility/trash_white',
               hovered_sprite = 'utility/trash',
               clicked_sprite = 'utility/trash',
-              tooltip = {'sonaxaton-research-queue.clear-tooltip'},
+              tooltip = {'factorio-research-queue.clear-tooltip'},
             },
             templates.frame_action_button{
               actions = {
@@ -188,7 +188,7 @@ local function build(player, window)
               sprite = 'utility/close_white',
               hovered_sprite = 'utility/close_black',
               clicked_sprite = 'utility/close_black',
-              tooltip = {'sonaxaton-research-queue.close-tooltip'},
+              tooltip = {'factorio-research-queue.close-tooltip'},
             },
           },
         },
@@ -225,7 +225,7 @@ local function build(player, window)
                             on_click = 'toggle_queue_pause',
                           },
                           sprite = 'rq-play-black',
-                          tooltip = {'sonaxaton-research-queue.queue-play-button-tooltip'},
+                          tooltip = {'factorio-research-queue.queue-play-button-tooltip'},
                           mouse_button_filter = {'left'},
                         },
                       },

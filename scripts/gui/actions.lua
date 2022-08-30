@@ -139,7 +139,7 @@ function actions.open_window(player)
 
   gui_data.window.visible = true
   player.opened = gui_data.window
-  player.set_shortcut_toggled('sonaxaton-research-queue', true)
+  player.set_shortcut_toggled('factorio-research-queue', true)
   if gui_data.main.search.visible then
     gui_data.main.search.focus()
     gui_data.main.search.select_all()
@@ -167,7 +167,7 @@ function actions.close_window(player)
       game.tick_paused = false
     end
   end
-  player.set_shortcut_toggled('sonaxaton-research-queue', false)
+  player.set_shortcut_toggled('factorio-research-queue', false)
 end
 
 function actions.toggle_window(player)
@@ -203,7 +203,7 @@ function actions.update_techs(player, translations_changed)
     local enabled = filter_data.ingredients[tech_ingredient.name]
     button.style = 'rq_tech_ingredient_filter_button_'..(enabled and 'enabled' or 'disabled')
     button.tooltip = {
-      'sonaxaton-research-queue.tech-ingredient-filter-button-'..(enabled and 'enabled' or 'disabled'),
+      'factorio-research-queue.tech-ingredient-filter-button-'..(enabled and 'enabled' or 'disabled'),
       tech_ingredient.localised_name,
     }
   end
@@ -419,7 +419,7 @@ function actions.update_queue(player, new_tech)
       queue_pause_toggle_button.sprite = 'rq-play-white'
       queue_pause_toggle_button.hovered_sprite = 'rq-play-black'
       queue_pause_toggle_button.clicked_sprite = 'rq-play-black'
-      queue_pause_toggle_button.tooltip = {'sonaxaton-research-queue.queue-play-button-tooltip'}
+      queue_pause_toggle_button.tooltip = {'factorio-research-queue.queue-play-button-tooltip'}
 
       pause_button_container.visible = true
       head_item_container.visible = false
@@ -430,7 +430,7 @@ function actions.update_queue(player, new_tech)
       queue_pause_toggle_button.sprite = 'rq-pause-white'
       queue_pause_toggle_button.hovered_sprite = 'rq-pause-black'
       queue_pause_toggle_button.clicked_sprite = 'rq-pause-black'
-      queue_pause_toggle_button.tooltip = {'sonaxaton-research-queue.queue-pause-button-tooltip'}
+      queue_pause_toggle_button.tooltip = {'factorio-research-queue.queue-pause-button-tooltip'}
 
       pause_button_container.visible = false
       head_item_container.visible = true
@@ -466,7 +466,7 @@ function actions.update_queue(player, new_tech)
                 type = 'label',
                 style = 'rq_etc_label',
                 caption = '[img=quantity-time][img=infinity]',
-                tooltip = {'sonaxaton-research-queue.etc-label-tooltip'},
+                tooltip = {'factorio-research-queue.etc-label-tooltip'},
               },
             },
           },
@@ -483,7 +483,7 @@ function actions.update_queue(player, new_tech)
                 },
                 tooltip =
                   shift_up_enabled and
-                    {'sonaxaton-research-queue.shift-up-button-tooltip', tech.tech.localised_name} or
+                    {'factorio-research-queue.shift-up-button-tooltip', tech.tech.localised_name} or
                     nil,
                 enabled = shift_up_enabled,
                 mouse_button_filter = {'left'},
@@ -498,7 +498,7 @@ function actions.update_queue(player, new_tech)
                   on_click = { type = 'dequeue', tech = tech.id },
                 },
                 sprite = 'utility/close_black',
-                tooltip = {'sonaxaton-research-queue.dequeue-button-tooltip', tech.tech.localised_name},
+                tooltip = {'factorio-research-queue.dequeue-button-tooltip', tech.tech.localised_name},
               },
               {
                 type = 'empty-widget',
@@ -512,7 +512,7 @@ function actions.update_queue(player, new_tech)
                 },
                 tooltip =
                   shift_down_enabled and
-                    {'sonaxaton-research-queue.shift-down-button-tooltip', tech.tech.localised_name} or
+                    {'factorio-research-queue.shift-down-button-tooltip', tech.tech.localised_name} or
                     nil,
                 enabled = shift_down_enabled,
                 mouse_button_filter = {'left'},
@@ -610,9 +610,9 @@ function actions.update_etcs(player)
     end
     tech_ingredient_totals_text = tech_ingredient_totals_text..'[/font]'
     etc_label.tooltip = {'',
-      {'sonaxaton-research-queue.etc-label-tooltip', etc_text},
+      {'factorio-research-queue.etc-label-tooltip', etc_text},
       '\n',
-      {'sonaxaton-research-queue.tech-ingredient-totals-tooltip',
+      {'factorio-research-queue.tech-ingredient-totals-tooltip',
         tech_ingredient_totals_text}}
   end
 end
@@ -780,7 +780,17 @@ function actions.on_technology_gui_closed(player)
   local gui_data = player_data.gui
 
   queue.set_paused(force, force.current_research == nil)
-  queue.update(force)
+  queue.update(force, 3) -- vanilla UI closed
+
+  for _, player in pairs(force.players) do
+    local player_data = global.players[player.index]
+    if player_data ~= nil then
+      local gui_data = player_data.gui
+      if gui_data.window.valid and gui_data.window.visible then
+        actions.update_queue(player, tech)
+      end
+    end
+  end
 
   if gui_data.window.valid and gui_data.window.visible then
     -- after the tech gui is closed, if the window was still visible, make it
@@ -792,9 +802,9 @@ end
 function actions.on_research_started(force, tech, last_tech)
   tech = rqtech.new(tech, 'current')
   if not queue.is_head(force, tech, true) then
-    queue.set_paused(force, false)
-    queue.enqueue_head(force, tech)
-    queue.update(force)
+    --queue.set_paused(force, false)
+    --queue.enqueue_head(force, tech)
+    queue.update(force, 2) -- research started
     for _, player in pairs(force.players) do
       local player_data = global.players[player.index]
       if player_data ~= nil then
@@ -809,7 +819,7 @@ end
 
 function actions.on_research_finished(force, tech)
   tech = rqtech.new(tech, 'previous')
-  queue.update(force)
+  queue.update(force, 1) -- research finished
   for _, player in pairs(force.players) do
     local player_data = global.players[player.index]
     if player_data ~= nil then
@@ -818,7 +828,7 @@ function actions.on_research_finished(force, tech)
       local tech_ingredients = player_data.tech_ingredients
 
       if settings.get_player_settings(player)['rq-notifications'].value then
-        player.print{'sonaxaton-research-queue.notification', tech.tech.name}
+        player.print{'factorio-research-queue.notification', tech.tech.name}
       end
 
       for _, tech_ingredient in ipairs(tech_ingredients) do
