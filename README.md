@@ -5,6 +5,7 @@
   - always kept in __sync__
   - completed one after the other (__wait__ for vanilla queue to be empty or __freeze__ vanilla while the mod queue has projects)
   - __moved__ from vanilla queue to the __head__ or __tail__  of the modded queue
+  - there is also a __hybrid__ mode where the first 4 slots are __synced__ and the last 3 are __moved__
 
 # Improved Research Queue
 

@@ -142,6 +142,7 @@ end)
 
 eventlib.on_load(function()
   gui.actions.register_translation_handler()
+  gui.register_translation_handler()
 end)
 
 eventlib.on_configuration_changed(function(event)
@@ -244,9 +245,9 @@ eventlib.on_player_display_scale_changed(function (event)
 end)
 
 eventlib.on_lua_shortcut(function(event)
-  if event.prototype_name == 'sonaxaton-research-queue' then
+  if event.prototype_name == 'factorio-research-queue' then
     local player = game.players[event.player_index]
-    if player.is_shortcut_toggled('sonaxaton-research-queue') then
+    if player.is_shortcut_toggled('factorio-research-queue') then
       gui.actions.close_window(player)
     else
       gui.actions.open_window(player)
