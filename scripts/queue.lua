@@ -386,11 +386,11 @@ local function update(force, queue, paused, mode)
             end
           end
           -- check for new techs
-          local new = false -- currently doesn't detect pure reorders - feature or bug?
+          local new = 0 -- currently doesn't detect pure reorders - feature or bug?
           for i=#rq, 1, -1 do -- already existing techs are simply moved to the appropriate position
-            new = new or enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
+            new = new + (enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i))) and 1 or 0)
           end
-          if not new then -- no new techs queued -> delete those no longer present in rq
+          if new == 0 then -- no new techs queued -> delete those no longer present in rq
             for _,tech in ipairs(removed) do
               dequeue(force, queue, tech)
             end
@@ -497,7 +497,6 @@ local function update(force, queue, paused, mode)
       if mode==2 then return end
       local rq = force.research_queue
       if mode == 3 and #rq > 1 then
-        force.print("sufficient items")
         -- move to mod queue
         if settings.global['rq-sync'].value == 'move-head' then
           for i=#rq,1,-1 do

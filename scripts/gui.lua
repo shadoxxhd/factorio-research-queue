@@ -863,7 +863,6 @@ local function on_technology_gui_opened(player)
 end
 
 local function on_technology_gui_closed(player)
-  player.print("TUI closed")
   local player_data = global.players[player.index]
   local gui_data = player_data.gui
   local force = player.force
@@ -883,7 +882,6 @@ local function on_technology_gui_closed(player)
 end
 
 local function on_research_started(force, tech, last_tech)
-  force.print("on_research_started:"..tech.name)
   tech = rqtech.new(tech, 'current')
   if not queue.is_head(force, tech, true) then
     queue.update(force, 2) -- 2: research started ----keep seperate (in case game is not paused while making changes to queue in vanilla UI); sets "diverged" flag
