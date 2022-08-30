@@ -405,9 +405,7 @@ local function update(force, queue, paused, mode)
           queue = clear(force, global.forces[force.index])
           local rq = force.research_queue
           for i=1, #rq do
-            local tech = rqtech.new(rq[i], 'current', count_prev(rq, i))
             enqueue_tail(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
-            --enqueue_head(force, queue, rqtech.new(rq[i], 'current', count_prev(rq, i)))
           end
         end
       elseif mode == 4 then -- pause toggle
