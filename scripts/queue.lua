@@ -260,7 +260,9 @@ end
 local function set_queue(force, target)
   local last = force.previous_research
   force.research_queue = target
-  force.previous_research = last
+  if last ~= nil then
+    force.previous_research = last
+  end
 end
 
 local function count_prev(rq, id)
