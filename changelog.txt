@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.6
+Date: 2022-09-09
+  Bugfixes:
+    - Fix multi-level researches without prerequisites not showing up in mod UI
+    - Fix crash in sync mode
+---------------------------------------------------------------------------------------------------
 Version: 0.5.2
 Date: 2022-08-31
   Bugfixes:

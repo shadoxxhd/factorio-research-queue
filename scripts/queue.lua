@@ -353,7 +353,7 @@ local function update(force, queue, paused, mode)
         set_queue(force, rq)
       elseif mode == 1 then -- research finished
         local rq = force.research_queue
-        if queues_identical(force, queue, #rq) then -- check for divergence while UI is open
+        if queues_identical(force, queue, #rq) and queue[7] then -- check for divergence while UI is open
           table.insert(rq, queue[7].tech)
           set_queue(force, rq)
         end

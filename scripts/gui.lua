@@ -237,6 +237,8 @@ local function update_techs(player)
       if tech.tech.upgrade or tech.infinite then
         -- only include upgrade techs if they have a "significant" dependency
         local has_significant_dependency = (function()
+          -- fix for "infinite" technologies without prerequisites
+          if tech.level and #tech.prerequisites == 0 and tech.level < 2 then return true end
           for _, dependency in pairs(tech.prerequisites) do
             local is_significant_dependency = (function()
               -- significant if not an upgrade or infinite
@@ -277,6 +279,7 @@ local function update_techs(player)
 
           -- upgrades are not hidden
           -- if the tech is infinite, still hide
+          -- EXCEPT when tech has no prerequisites
           if tech.infinite then
             return false
           end
