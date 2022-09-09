@@ -222,6 +222,11 @@ function actions.update_techs(player, translations_changed)
       local has_significant_dependency = (function()
         for _, dependency in pairs(tech.prerequisites) do
           local is_significant_dependency = (function()
+            -- significant if initially available research
+            if #tech.prerequisites == 0 and tech.level and tech.level < 2 then
+              return true
+            end
+
             -- significant if not an upgrade or infinite
             if not (dependency.tech.upgrade or dependency.infinite) then
               return true
